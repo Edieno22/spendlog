@@ -41,14 +41,34 @@ function fillTable(id, rows, columns, emptyText) {
   }
 }
 
-async function loadExpenses() {
-  const rows = await request('/api/expenses');
+const PAGE_SIZE = 10; // expenses shown per page
+let allExpenses = [];
+let page = 1;
+
+function showExpensePage() {
+  const pages = Math.max(1, Math.ceil(allExpenses.length / PAGE_SIZE));
+  page = Math.min(Math.max(page, 1), pages);
+  const rows = allExpenses.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
   fillTable('expense-rows',
     rows.map((r) => [r.date, r.description, r.category, formatMoney(r.amount)]),
     4, 'No expenses recorded yet.');
 
+  document.getElementById('page-info').textContent = `Page ${page} of ${pages}`;
+  document.getElementById('prev-page').disabled = page === 1;
+  document.getElementById('next-page').disabled = page === pages;
+}
+
+document.getElementById('prev-page').addEventListener('click', () => { page--; showExpensePage(); });
+document.getElementById('next-page').addEventListener('click', () => { page++; showExpensePage(); });
+
+async function loadExpenses() {
+  allExpenses = await request('/api/expenses');
+  page = 1;
+  showExpensePage();
+
   const list = document.getElementById('categories');
-  list.replaceChildren(...[...new Set(rows.map((r) => r.category))].map((c) => new Option(c, c)));
+  list.replaceChildren(...[...new Set(allExpenses.map((r) => r.category))].map((c) => new Option(c, c)));
 }
 
 async function loadReports() {
@@ -57,6 +77,10 @@ async function loadReports() {
     fillTable(`${type}-rows`,
       data[type].map((r) => [r.label, formatMoney(r.total)]),
       2, 'No expenses in this range.');
+
+    // add in cents to avoid decimal rounding errors
+    const cents = data[type].reduce((sum, r) => sum + Math.round(Number(r.total) * 100), 0);
+    document.getElementById(`${type}-total`).textContent = formatMoney(cents / 100);
   }
 }
 
@@ -100,8 +124,18 @@ filterForm.addEventListener('submit', (event) => {
   applyRange(Object.fromEntries(new FormData(filterForm)));
 });
 
+// End date cannot be earlier than the start date
+const startInput = filterForm.elements.start;
+const endInput = filterForm.elements.end;
+
+startInput.addEventListener('change', () => {
+  endInput.min = startInput.value; // disables earlier dates in the calendar
+  if (endInput.value && endInput.value < startInput.value) endInput.value = '';
+});
+
 document.getElementById('clear').addEventListener('click', () => {
   filterForm.reset();
+  endInput.min = '';
   applyRange({ start: '', end: '' });
 });
 

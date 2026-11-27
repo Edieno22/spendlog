@@ -17,9 +17,9 @@
       <h2>Add expense</h2>
       <form id="expense-form">
         <label>Date <input type="date" name="date" required></label>
-        <label>Description <input type="text" name="description" maxlength="100" required></label>
-        <label>Category <input type="text" name="category" maxlength="40" list="categories" required></label>
-        <label>Amount <input type="number" name="amount" min="0.01" step="0.01" required></label>
+        <label>Description <input type="text" name="description" maxlength="100" placeholder="Enter description" required></label>
+        <label>Category <input type="text" name="category" maxlength="40" list="categories" placeholder="Choose category" required></label>
+        <label>Amount <input type="number" name="amount" min="0.01" step="0.01" placeholder="e.g. 150.00" required></label>
         <button type="submit">Save expense</button>
       </form>
       <datalist id="categories"></datalist>
@@ -34,6 +34,11 @@
           <tbody id="expense-rows"></tbody>
         </table>
       </div>
+      <div class="pager">
+        <button type="button" id="prev-page">Previous</button>
+        <span id="page-info"></span>
+        <button type="button" id="next-page">Next</button>
+     </div>
     </section>
 
     <section>
@@ -52,6 +57,7 @@
           <table>
             <thead><tr><th>Category</th><th class="num">Total</th></tr></thead>
             <tbody id="category-rows"></tbody>
+            <tfoot><tr><td>Total</td><td class="num" id="category-total"></td></tr></tfoot>
           </table>
         </article>
         <article>
@@ -59,6 +65,7 @@
           <table>
             <thead><tr><th>Date</th><th class="num">Total</th></tr></thead>
             <tbody id="daily-rows"></tbody>
+            <tfoot><tr><td>Total</td><td class="num" id="daily-total"></td></tr></tfoot>
           </table>
         </article>
         <article>
@@ -66,6 +73,7 @@
           <table>
             <thead><tr><th>Month</th><th class="num">Total</th></tr></thead>
             <tbody id="monthly-rows"></tbody>
+            <tfoot><tr><td>Total</td><td class="num" id="monthly-total"></td></tr></tfoot>
           </table>
         </article>
       </div>

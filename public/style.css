@@ -18,3 +18,19 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid #e5ebe8; overf
 .scroll { max-height: 360px; overflow: auto; }
 .reports { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
 .empty { text-align: center; color: #6b7a75; }
+/* Dates stay on one line */
+#expense-rows td:first-child,
+#daily-rows td:first-child,
+#monthly-rows td:first-child { white-space: nowrap; }
+
+/* Pagination */
+.scroll { max-height: none; }
+.pager { display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 12px; }
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* Clear divider between reports */
+.reports { margin-top: 8px; }
+.reports article { border: 2px solid #b8c4bf; border-radius: 8px; padding: 0 12px 12px; }
+
+/* Total row */
+tfoot td { font-weight: bold; border-top: 2px solid #14532d; }
